@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WikiBrawler — Multiverse Character Hub</title>
+
+    <!-- Enlaces a Google Fonts para las tipografías temáticas y principales -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Bungee&family=Teko:wght@600&family=Share+Tech+Mono&family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Framework CSS Bulma -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <!-- Librería de iconos FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Hoja de estilos personalizada -->
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+    <!-- ========================================== -->
+    <!-- BARRA DE NAVEGACIÓN SUPERIOR               -->
+    <!-- ========================================== -->
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="container">
+            <div class="navbar-brand">
+                <a class="navbar-item title-font is-size-4 has-text-weight-bold" href="#">
+                    <i class="fa-solid fa-khanda mr-2 has-text-warning"></i> WikiBrawler
+                </a>
+            </div>
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <!-- Botón para abrir el modal de creación de un nuevo personaje -->
+                    <button class="button is-info is-rounded title-font" onclick="openCreateModal()">
+                        <span class="icon"><i class="fa-solid fa-plus"></i></span>
+                        <span>Nuevo Personaje</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========================================== -->
+    <!-- SECCIÓN HERO / ENCABEZADO PRINCIPAL        -->
+    <!-- ========================================== -->
+    <section class="hero is-nexus py-5">
+        <div class="hero-body container">
+            <h1 class="title title-font has-text-white is-2">WikiBrawler</h1>
+            <p class="subtitle has-text-grey-light">Base de datos interactiva para héroes, luchadores y personajes propios (OCs).</p>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- CONTENIDO PRINCIPAL Y FILTROS              -->
+    <!-- ========================================== -->
+    <main class="container my-5 px-4">
+        <!-- Caja de controles: buscador por texto, selector de universos y orden alfabético -->
+        <div class="box search-box">
+            <div class="columns is-vcentered">
+                <!-- Campo de búsqueda de texto general -->
+                <div class="column is-4">
+                    <div class="field">
+                        <p class="control has-icons-left">
+                            <input class="input" type="text" id="searchInput" placeholder="Buscar por nombre, juego u origen..." oninput="handleSearch()">
+                            <span class="icon is-small is-left"><i class="fas fa-search"></i></span>
+                        </p>
+                    </div>
+                </div>
+                <!-- Menú desplegable para filtrar por juego/universo -->
+                <div class="column is-3">
+                    <div class="field">
+                        <div class="control has-icons-left">
+                            <div class="select is-fullwidth">
+                                <select id="gameFilter" onchange="handleSearch()">
+                                    <option value="">Todos los Juegos / Universos</option>
+                                    <option value="Overwatch">Overwatch</option>
+                                    <option value="Super Smash Bros">Super Smash Bros</option>
+                                    <option value="Marvel Rivals">Marvel Rivals</option>
+                                    <option value="Mortal Kombat">Mortal Kombat</option>
+                                    <option value="Deadlock">Deadlock</option>
+                                    <option value="Creación Propia">Creación Propia (OC)</option>
+                                </select>
+                            </div>
+                            <span class="icon is-small is-left"><i class="fas fa-gamepad"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Menú desplegable para el ordenamiento alfabético -->
+                <div class="column is-2">
+                    <div class="field">
+                        <div class="control has-icons-left">
+                            <div class="select is-fullwidth">
+                                <select id="sortFilter" onchange="handleSearch()">
+                                    <option value="">Ordenar por...</option>
+                                    <option value="asc">Nombre (A - Z)</option>
+                                    <option value="desc">Nombre (Z - A)</option>
+                                </select>
+                            </div>
+                            <span class="icon is-small is-left"><i class="fas fa-sort-alpha-down"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Contador de resultados totales y botón de reinicio de filtros -->
+                <div class="column is-3 has-text-right">
+                    <span id="resultsCount" class="tag is-dark is-medium title-font">Cargando roster...</span>
+                    <button class="button is-small is-ghost has-text-grey-light" onclick="resetFilters()">Limpiar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenedor dinámico donde se renderizan las tarjetas de personajes -->
+        <div id="characterGrid" class="columns is-multiline"></div>
+
+        <!-- Estado vacío: se muestra cuando la búsqueda no arroja resultados -->
+        <div id="emptyState" class="empty-state is-hidden">
+            <i class="fa-solid fa-ghost fa-4x mb-3 has-text-grey"></i>
+            <h3 class="title title-font is-4 has-text-white">No se encontraron personajes</h3>
+            <p class="has-text-grey-light mb-4">Intenta ajustar tu búsqueda o agrega un nuevo personaje al multiverso.</p>
+            <button class="button is-info is-outlined" onclick="resetFilters()">Ver todos los personajes</button>
+        </div>
+    </main>
+
+    <!-- ========================================== -->
+    <!-- VENTANA MODAL DE DETALLES DEL PERSONAJE    -->
+    <!-- ========================================== -->
+    <div id="detailModal" class="modal">
+        <!-- Fondo oscuro difuminado detrás del modal -->
+        <div class="modal-background" onclick="closeModal('detailModal')"></div>
+        
+        <!-- Botones de navegación lateral (flechas para cambiar de personaje) -->
+        <button class="modal-nav-btn modal-nav-prev" onclick="navigateDetail(-1)" title="Personaje Anterior">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button class="modal-nav-btn modal-nav-next" onclick="navigateDetail(1)" title="Personaje Siguiente">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <!-- Tarjeta principal contenedora de los detalles -->
+        <div class="modal-card detail-modal-card" id="detailModalCardBox">
+            <header class="modal-card-head is-justify-content-space-between">
+                <p class="modal-card-title title-font">WikiBrawler</p>
+                <!-- Botón de retorno/volver ubicado en el encabezado -->
+                <button class="button is-small is-light" onclick="closeModal('detailModal')">
+                    <span class="icon"><i class="fa-solid fa-arrow-left"></i></span>
+                    <span>Volver</span>
+                </button>
+            </header>
+            
+            <section class="modal-card-body detail-modal-body" id="detailModalBodyContent">
+                <div class="columns is-vcentered">
+                    <!-- Columna izquierda: Imagen o marcador de posición -->
+                    <div class="column is-5">
+                        <div class="image-placeholder detail-img" id="detailImageContainer" style="overflow: hidden;">
+                            <img id="detailImgTag" src="" alt="Imagen de Personaje" style="width: 100%; height: 100%; object-fit: contain; display: none;">
+                            <div id="detailPlaceholderIcon" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-image fa-5x mb-3 image-icon"></i>
+                                <span class="is-size-6 has-text-centered px-2">[ Sin Imagen ]</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Columna derecha: Información detallada, lore y estadísticas -->
+                    <div class="column is-7">
+                        <div class="mb-3 is-flex is-align-items-center">
+                            <span id="detailBadge" class="game-badge">Juego</span>
+                            <span id="detailClassBadge" class="tag is-dark ml-3 is-large">Clase</span>
+                        </div>
+                        <h2 class="title-font has-text-white detail-title-name mb-3" id="detailName">Nombre Personaje</h2>
+                        <div class="box detail-info-box mb-4">
+                            <p class="detail-meta-text mb-2"><strong><i class="fa-solid fa-earth-americas mr-2 has-text-info"></i>Origen:</strong> <span id="detailOrigin" class="has-text-grey-light">--</span></p>
+                            <p class="detail-meta-text mb-0"><strong><i class="fa-solid fa-barcode mr-2 has-text-info"></i>ID:</strong> <span id="detailId" class="is-family-code is-size-6 has-text-info">--</span></p>
+                        </div>
+                        <hr class="detail-divider">
+                        <h4 class="title-font is-size-5 has-text-info mb-2"><i class="fa-solid fa-book-open mr-2"></i>LORE / HISTORIA:</h4>
+                        <p id="detailDescription" class="has-text-grey-light detail-description">--</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Pie de página del modal con acciones de edición y eliminación -->
+            <footer class="modal-card-foot is-justify-content-flex-end py-3 px-5">
+                <button class="button is-danger is-small mr-2" id="btnDeleteFromDetail"><i class="fa-solid fa-trash mr-1"></i> Eliminar</button>
+                <button class="button is-warning is-small" id="btnEditFromDetail"><i class="fa-solid fa-pen mr-1"></i> Editar</button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VENTANA MODAL DE CREACIÓN / EDICIÓN        -->
+    <!-- ========================================== -->
+    <div id="formModal" class="modal">
+        <div class="modal-background" onclick="closeModal('formModal')"></div>
+        <div class="modal-card form-modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title title-font" id="formModalTitle">Agregar Personaje</p>
+                <button class="delete" aria-label="close" onclick="closeModal('formModal')"></button>
+            </header>
+            
+            <!-- Formulario de captura de datos del personaje -->
+            <form id="characterForm" onsubmit="handleFormSubmit(event)">
+                <section class="modal-card-body form-modal-body">
+                    <input type="hidden" id="characterId">
+                    
+                    <!-- Campo de Nombre -->
+                    <div class="field">
+                        <label class="label">Nombre del Personaje *</label>
+                        <div class="control"><input class="input" type="text" id="inputNombre" placeholder="Ej. Tracer..." required></div>
+                    </div>
+
+                    <!-- Fila con selector de universo y campo de rol -->
+                    <div class="columns">
+                        <div class="column is-6">
+                            <div class="field">
+                                <label class="label">Universo / Juego *</label>
+                                <div class="control">
+                                    <div class="select is-fullwidth">
+                                        <select id="inputJuego" required>
+                                            <option value="Overwatch">Overwatch</option>
+                                            <option value="Super Smash Bros">Super Smash Bros</option>
+                                            <option value="Marvel Rivals">Marvel Rivals</option>
+                                            <option value="Mortal Kombat">Mortal Kombat</option>
+                                            <option value="Deadlock">Deadlock</option>
+                                            <option value="Creación Propia">Creación Propia (OC)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-6">
+                            <div class="field">
+                                <label class="label">Clase / Rol *</label>
+                                <div class="control"><input class="input" type="text" id="inputRol" placeholder="Ej. Daño, Tanque..." required></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Campo de Origen -->
+                    <div class="field">
+                        <label class="label">Origen / Franquicia</label>
+                        <div class="control"><input class="input" type="text" id="inputOrigen" placeholder="Ej. Londres, Reino Unido"></div>
+                    </div>
+
+                    <!-- Campo de Descripción / Historia -->
+                    <div class="field">
+                        <label class="label">Descripción / Historia</label>
+                        <div class="control"><textarea class="textarea" id="inputDescripcion" rows="3" placeholder="Breve historia..."></textarea></div>
+                    </div>
+
+                    <!-- Campo de Imagen WebP -->
+                    <div class="field">
+                        <label class="label">Nombre del archivo de imagen (.webp)</label>
+                        <div class="control">
+                            <input class="input" type="text" id="inputImagen" placeholder="Ej. tracer.webp (debe estar en la carpeta imagenes/)">
+                        </div>
+                        <p class="help has-text-grey-light">Solo escribe el nombre del archivo (ej. <code>tracer.webp</code>).</p>
+                    </div>
+                </section>
+                
+                <!-- Botones de control del formulario -->
+                <footer class="modal-card-foot is-justify-content-flex-end">
+                    <button type="button" class="button mr-2" onclick="closeModal('formModal')">Cancelar</button>
+                    <button type="submit" class="button is-info title-font">Guardar Personaje</button>
+                </footer>
+            </form>
+        </div>
+    </div>
+
+    <!-- Enlace al archivo de lógica JavaScript principal -->
+    <script src="/js/app_logic.js"></script>
+</body>
+</html>

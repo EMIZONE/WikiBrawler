@@ -1,0 +1,290 @@
+/* libreria de estilos CSS*/
+
+/* Definición de variables globales de diseño, colores y tipografías */
+:root {
+    --bg-dark: #0f1219;
+    --card-bg: #181d28;
+    --text-light: #e2e8f0;
+    --border-color: #2a3447;
+    
+    /* Universos y Temáticas de Juegos */
+    --theme-overwatch: #f99e1a;
+    --font-overwatch: 'Teko', sans-serif;
+
+    --theme-smash: #e60012;
+    --font-smash: 'Bungee', cursive;
+
+    --theme-marvel: #00d4ff;
+    --font-marvel: 'Orbitron', sans-serif;
+
+    --theme-mk: #e5b000;
+    --font-mk: 'Cinzel', serif;
+
+    --theme-deadlock: #19a974;
+    --font-deadlock: 'Share Tech Mono', monospace;
+
+    --theme-custom: #9b51e0;
+    --font-custom: 'Rajdhani', sans-serif;
+}
+
+/* Clases de tipografía personalizada para las insignias de cada juego */
+.badge-overwatch { font-family: var(--font-overwatch); font-size: 1.3rem; letter-spacing: 0.5px; }
+.badge-smash { font-family: var(--font-smash); font-size: 1rem; }
+.badge-marvel { font-family: var(--font-marvel); font-size: 1rem; font-weight: 800; text-transform: uppercase; }
+.badge-mk { font-family: var(--font-mk); font-size: 1.2rem;}
+.badge-deadlock { font-family: var(--font-deadlock); font-size: 1.2rem; text-transform: uppercase; }
+.badge-custom { font-family: var(--font-custom); font-size: 1.2rem; font-weight: 700; }
+
+/* Configuración general de la página y tipografía principal */
+html, body {
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Estilo para títulos principales con tipografía futurista */
+.title-font { font-family: 'Orbitron', sans-serif; }
+
+/* Barra de navegación superior */
+.navbar {
+    background-color: #131722 !important;
+    border-bottom: 2px solid var(--border-color);
+}
+.navbar-item, .navbar-brand { color: #ffffff !important; }
+
+/* Sección de encabezado (Hero) */
+.hero.is-nexus {
+    background: linear-gradient(135deg, #131722 0%, #1c2333 100%);
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Caja contenedora de filtros y búsqueda */
+.search-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
+
+/* Tarjetas individuales de personajes en la cuadrícula */
+.character-card {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+/* Efecto hover (al pasar el mouse) sobre las tarjetas principales */
+.character-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.7);
+}
+
+.card-body-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Espacios reservados para las imágenes de las tarjetas */
+.image-placeholder {
+    width: 100%;
+    height: 450px;
+    background: #232a3b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    border-bottom: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden; /* Evita que elementos hijos se salgan */
+}
+
+.image-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Contenedor de imagen ampliada para el modal de detalles (Muestra la imagen completa sin recortes) */
+.image-placeholder.detail-img {
+    height: 480px;
+    border-radius: 12px;
+    border: 2px dashed #475569;
+    overflow: hidden;
+    background: #0f1219;
+}
+
+.image-placeholder.detail-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* <-- Aquí está el detalle que hace el zoom */
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Bordes temáticos dinámicos según el juego de la tarjeta */
+.character-card.theme-overwatch { border-color: var(--theme-overwatch) !important; }
+.character-card.theme-smash { border-color: var(--theme-smash) !important; }
+.character-card.theme-marvel { border-color: var(--theme-marvel) !important; }
+.character-card.theme-mk { border-color: var(--theme-mk) !important; }
+.character-card.theme-deadlock { border-color: var(--theme-deadlock) !important; }
+.character-card.theme-custom { border-color: var(--theme-custom) !important; }
+
+/* Estilos comunes para las etiquetas de juego (badges) */
+.game-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Colores de fondo específicos para los badges según el juego */
+.bg-overwatch { background-color: var(--theme-overwatch); }
+.bg-smash { background-color: var(--theme-smash); }
+.bg-marvel { background-color: var(--theme-marvel); color: #000; }
+.bg-mk { background-color: var(--theme-mk); color: #000; }
+.bg-deadlock { background-color: var(--theme-deadlock); }
+.bg-custom { background-color: var(--theme-custom); }
+
+/* Contenedores generales para las ventanas modales */
+.modal-card {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+}
+
+/* Tamaños adaptativos para los modales de detalle y formularios */
+.detail-modal-card { max-width: 1200px; width: 92%; }
+.form-modal-card { max-width: 650px; width: 90%; }
+
+.modal.is-active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 50px;
+}
+
+/* Animación de apertura, cierre y escalado del modal de detalles */
+#detailModal .modal-card {
+    transform: scale(0.85);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+}
+
+#detailModal.is-active .modal-card {
+    transform: scale(1);
+    opacity: 1;
+}
+
+#detailModal.is-closing .modal-card {
+    transform: scale(0.85) !important;
+    opacity: 0 !important;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease !important;
+}
+
+/* Animaciones direccionales fluidas para la navegación lateral entre tarjetas */
+.slide-out-left { animation: slideOutLeftAnim 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.slide-in-right { animation: slideInRightAnim 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.slide-out-right { animation: slideOutRightAnim 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.slide-in-left { animation: slideInLeftAnim 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+@keyframes slideOutLeftAnim {
+    0% { opacity: 1; transform: translateX(0); }
+    100% { opacity: 0; transform: translateX(-60px); }
+}
+@keyframes slideInRightAnim {
+    0% { opacity: 0; transform: translateX(60px); }
+    100% { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideOutRightAnim {
+    0% { opacity: 1; transform: translateX(0); }
+    100% { opacity: 0; transform: translateX(60px); }
+}
+@keyframes slideInLeftAnim {
+    0% { opacity: 0; transform: translateX(-60px); }
+    100% { opacity: 1; transform: translateX(0); }
+}
+
+/* Encabezados y pies de página dentro de los modales */
+.modal-card-head, .modal-card-foot {
+    background-color: #131722;
+    border-color: var(--border-color);
+}
+
+.modal-card-title { color: #ffffff; font-family: 'Orbitron', sans-serif; }
+.detail-modal-body, .form-modal-body { background: var(--card-bg); color: var(--text-light); padding: 2.5rem; }
+
+/* Caja de información detallada interna */
+.detail-info-box {
+    background: rgba(15, 18, 25, 0.7);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1.25rem;
+}
+
+.detail-divider { background-color: var(--border-color); height: 1px; margin: 1.5rem 0; }
+.detail-title-name { font-size: 2.2rem; font-weight: 800; line-height: 1.1; }
+.detail-description { line-height: 1.8; font-size: 1.15rem; }
+.detail-meta-text { font-size: 1.1rem; }
+
+/* Botones de navegación lateral (flechas izq / der en el modal) */
+.modal-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(19, 23, 34, 0.9);
+    border: 2px solid var(--border-color);
+    color: #ffffff;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 50;
+    font-size: 1.3rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+.modal-nav-btn:hover {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    transform: translateY(-50%) scale(1.12);
+}
+.modal-nav-prev { left: 10px; }
+.modal-nav-next { right: 10px; }
+
+/* Estilos personalizados para formularios, campos de texto y selectores */
+.input, .textarea, .select select {
+    background-color: #0f1219;
+    border-color: var(--border-color);
+    color: #ffffff;
+}
+
+.input::placeholder, .textarea::placeholder { color: #64748b; }
+.label { color: #cbd5e1; }
+
+/* Estado visual cuando no se encuentran resultados de búsqueda */
+.empty-state {
+    padding: 4rem 2rem;
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 2px dashed var(--border-color);
+    text-align: center;
+}
